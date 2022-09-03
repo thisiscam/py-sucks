@@ -1,18 +1,11 @@
-Linux: [![Build Status](https://travis-ci.org/wpietri/sucks.svg?branch=master)](https://travis-ci.org/wpietri/sucks)
-Windows: [![Build Status](https://ci.appveyor.com/api/projects/status/github/wpietri/sucks)](https://ci.appveyor.com/project/wpietri/sucks)
+[![Tests](https://github.com/mib1185/ha-sucks/actions/workflows/tests.yaml/badge.svg)](https://github.com/mib1185/ha-sucks/actions/workflows/tests.yaml)
+
 
 
 sucks
 =====
 
-## Caution: Abandonware ahead
-
-As of March 2020, this is no longer an active project. My Ecovacs robot died and
-has since been replaced with a Roomba. That means I can't see if code changes work,
-so I can't even usefully approve patches. As of yet, nobody has agreed to take it
-over. If you are interested in doing so, please join the
-[mailing list](https://groups.google.com/forum/#!forum/sucks-users)
-and discuss it there. 
+This is the successor of https://github.com/wpietri/sucks.
 
 ## Overview
 
