@@ -1,4 +1,4 @@
-[![Tests](https://github.com/mib1185/ha-sucks/actions/workflows/tests.yaml/badge.svg)](https://github.com/mib1185/ha-sucks/actions/workflows/tests.yaml)
+[![Tests](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml/badge.svg)](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml)
 
 
 
