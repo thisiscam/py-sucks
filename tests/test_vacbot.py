@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from slixmpp.exceptions import XMPPError
+from sleekxmppfs.exceptions import XMPPError
 
 from sucks import *
 
