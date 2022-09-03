@@ -77,7 +77,7 @@ setup(
     # $ pip install -e .[dev,test]
     extras_require={
         'dev': [
-            'nose',
+            'pytest',
             'requests-mock>=1.3'
         ],
     },
