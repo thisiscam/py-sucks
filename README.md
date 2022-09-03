@@ -1,4 +1,6 @@
 [![Tests](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml/badge.svg)](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml)
+[![PyPI version](https://badge.fury.io/py/py-sucks.svg)](https://pypi.org/project/py-sucks)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/py-sucks)](https://pypi.org/project/py-sucks)
 
 # py-sucks
 
