@@ -3,7 +3,6 @@
 For a description of the Ecovacs API protocols, see
 [the protocol documentation](protocol.md)
 
-
 ## Getting started with Sucks
 
 If you'd like to join in on developing, I recommend checking out the code,
@@ -12,32 +11,29 @@ and installing this package in dev mode. You can confirm your environment
 works by running the tests. The commands for that look something like
 like
 
-```
-% python3 -m virtualenv env
-% source env/bin/activate
-% pip install -e .[dev]
-% nosetests
+```bash
+python3 -m virtualenv env
+source env/bin/activate
+pip install -e .[dev]
+pytest tests
 ```
 
 If the test run is successful, it will say something like
 
 ```
-Ran 44 tests in 0.734s
-
-OK
+44 passed in 0.16s
 ```
 
 Current test are not yet
 comprehensive, as the integrated nature of this makes it difficult.
 But we aim to reduce that problem over time, so please add tests as you go.
 
-
 ## MITM XMPP traffic between the Android or iOS App and the Ecovacs server
 
 1. Download [xmpppeek](https://www.beneaththewaves.net/Software/XMPPPeek.html)
 2. Create a self-signed certificate with the following command
 
-`openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes`
+   `openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes`
 
 3. Edit xmpppeek.py and change port to 5223
 
@@ -51,8 +47,7 @@ name point to your IP.
 
 6. Run xmppeek as follows.
 
-`python ./xmpppeek.py <ECOVACS XMPP SERVER IP> cert.pem key.pem`
-
+   `python ./xmpppeek.py <ECOVACS XMPP SERVER IP> cert.pem key.pem`
 
 ## Reset robot to factory settings
 
@@ -66,3 +61,10 @@ to indicate successful reset.
 
 You will have to delete the robot from the mobile app and go through the setup
 process.
+
+## Do release
+
+- change version in `setup.py` (*commit message `bump version to A.B.C`*)
+- tag this commit as `vA.B.C`
+- create [new release](https://github.com/mib1185/py-sucks/releases/new)
+- GitHub workflow [publish.yaml](https://github.com/mib1185/py-sucks/blob/master/.github/workflows/publish.yaml) will build the package and upload it to PyPi

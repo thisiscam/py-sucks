@@ -8,19 +8,20 @@ here = path.abspath(path.dirname(__file__))
 # Get the long description from the README file
 long_description = ''
 try:
-    with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+    with open(path.join(here, 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
 except FileNotFoundError:
     print("can't find python README; skipping")
 
 setup(
-    name='sucks',
+    name='py-sucks',
     version='0.9.6',
 
     description='an abandoned library for controlling certain robot vacuums',
     long_description=long_description,
+    long_description_content_type='text/markdown',
 
-    url='https://github.com/wpietri/sucks',
+    url='https://github.com/mib1185/py-sucks',
 
     # Author details
     author='William Pietri',

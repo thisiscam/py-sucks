@@ -1,11 +1,8 @@
 [![Tests](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml/badge.svg)](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml)
 
+# sucks
 
-
-sucks
-=====
-
-This is the successor of https://github.com/wpietri/sucks.
+This is the successor of <https://github.com/wpietri/sucks>.
 
 ## Overview
 
@@ -36,13 +33,14 @@ To get started, you'll need to have already set up an EcoVacs account
 using your smartphone.
 
 With that ready, step one is to log in:
-```
-    % sucks login
-    Ecovacs app email: [your email]
-    Ecovacs app password: [your password]
-    your two-letter country code: us
-    your two-letter continent code: na
-    Config saved.
+
+```bash
+% sucks login
+Ecovacs app email: [your email]
+Ecovacs app password: [your password]
+your two-letter country code: us
+your two-letter continent code: na
+Config saved.
 ```
 
 That creates a config file in a platform-appropriate place. The password
@@ -52,40 +50,40 @@ to work for your continent, try "ww", their world-wide catchall.)
 With that set up, you could have it clean in auto mode for 10 minutes
 and return to its charger:
 
-```
-    % sucks clean 10
+```bash
+% sucks clean 10
 ```
 
 You could have it clean for 15 minutes and then do an extra 10 minutes
 of edging:
 
-```
-    % sucks clean 15 edge 10
+```bash
+% sucks clean 15 edge 10
 ```
 
 If you wanted it to clean for 5 minutes and then stop without charging:
 
-```
-    % sucks clean 5 stop
+```bash
+% sucks clean 5 stop
 ```
 
 If it's running amok and you'd just like it to stop where it is:
 
-```
-    % sucks stop
+```bash
+% sucks stop
 ```
 
 To tell it to go plug in:
 
-```
-    % sucks charge
+```bash
+% sucks charge
 ```
 
 I run mine from my crontab, but I didn't want it to clean every day,
 so it also has a mode where it randomly decides to run or not based on
 a frequency you give it. My crontab entry looks like this:
 
-```
+```plaintext
 0 10 * * * /home/william/projects/sucks/sucks.sh clean -f 4/7 15 edge -f 1/14 10
 ```
 
@@ -103,7 +101,7 @@ shaping the API.
 
 A simple usage might go something like this:
 
-```
+```python
 import sucks
 
 config = ...
@@ -129,8 +127,6 @@ to discuss your plans.
 
 For more information see [the development documentation](developing.md).
 
-
-
 ## See also
 
 There are now similar libraries in [Javascript](https://github.com/joostth/sucks.js)
@@ -140,17 +136,10 @@ and [Go](https://github.com/skburgart/go-vacbot).
 
 My heartfelt thanks to:
 
-* [xmpppeek](https://www.beneaththewaves.net/Software/XMPPPeek.html),
-a great library for examining XMPP traffic flows (yes, your vacuum
-speaks Jabbber!),
+* [xmpppeek](https://www.beneaththewaves.net/Software/XMPPPeek.html), a great library for examining XMPP traffic flows (yes, your vacuum speaks Jabbber!),
 * [mitmproxy](https://mitmproxy.org/), a fantastic tool for analyzing HTTPS,
-* [click](http://click.pocoo.org/), a wonderfully complete and thoughtful
-library for making Python command-line interfaces,
-* [requests](http://docs.python-requests.org/en/master/), a polished Python
-library for HTTP requests,
-* [Decompilers online](http://www.javadecompilers.com/apk), which was
-very helpful in figuring out what the Android app was up to,
-* Albert Louw, who was kind enough to post code from [his own
-experiments](https://community.smartthings.com/t/ecovacs-deebot-n79/93410/33)
-with his device, and
+* [click](http://click.pocoo.org/), a wonderfully complete and thoughtful library for making Python command-line interfaces,
+* [requests](http://docs.python-requests.org/en/master/), a polished Python library for HTTP requests,
+* [Decompilers online](http://www.javadecompilers.com/apk), which was very helpful in figuring out what the Android app was up to,
+* Albert Louw, who was kind enough to post code from [his own experiments](https://community.smartthings.com/t/ecovacs-deebot-n79/93410/33) with his device, and
 * All the users who have given useful feedback and contributed code!
