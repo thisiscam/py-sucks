@@ -1,6 +1,6 @@
 [![Tests](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml/badge.svg)](https://github.com/mib1185/py-sucks/actions/workflows/tests.yaml)
 
-# sucks
+# py-sucks
 
 This is the successor of <https://github.com/wpietri/sucks>.
 
@@ -14,7 +14,7 @@ Does it work for your model as well? Join the discussion on the
 [sucks-users mailing
 list](https://groups.google.com/forum/#!forum/sucks-users).
 
-If you're curious about the protocol, I have [a rough doc](http://github.com/wpietri/sucks/blob/master/protocol.md)
+If you're curious about the protocol, I have [a rough doc](http://github.com/mib1185/py-sucks/blob/master/protocol.md)
 started. I'll happily accept pull requests for it.
 
 Why the project name? Well, a) it's ridiculous that I needed to MITM
@@ -24,7 +24,7 @@ it's a vacuum.
 ## Installation
 
 If you have a recent version of Python 3, you should be able to
-do `pip install sucks` to get the most recently released version of
+do `pip install py-sucks` to get the most recently released version of
 this.
 
 ## Usage
