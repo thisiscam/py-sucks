@@ -65,6 +65,8 @@ process.
 ## Do release
 
 - change version in `setup.py` (*commit message `bump version to A.B.C`*)
-- tag this commit as `vA.B.C`
 - create [new release](https://github.com/mib1185/py-sucks/releases/new)
+  - create new tag for this commit as `vA.B.C`
+  - set release-name to A.B.C
+  - add noteworthy changes/PRs in description
 - GitHub workflow [publish.yaml](https://github.com/mib1185/py-sucks/blob/master/.github/workflows/publish.yaml) will build the package and upload it to PyPi
