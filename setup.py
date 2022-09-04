@@ -15,9 +15,9 @@ except FileNotFoundError:
 
 setup(
     name='py-sucks',
-    version='0.9.7',
+    version='0.9.8',
 
-    description='an abandoned library for controlling certain robot vacuums',
+    description='a library for controlling certain robot vacuums',
     long_description=long_description,
     long_description_content_type='text/markdown',
 
@@ -32,22 +32,11 @@ setup(
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
-        # How mature is this project? Common values are
-        #   3 - Alpha
-        #   4 - Beta
-        #   5 - Production/Stable
         'Development Status :: 4 - Beta',
-
-        # Indicate who your project is intended for
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries',
         'Topic :: Home Automation',
-
-        # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
-
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
