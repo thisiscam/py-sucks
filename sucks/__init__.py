@@ -5,6 +5,7 @@ import time
 from base64 import b64decode, b64encode
 from collections import OrderedDict
 from threading import Event
+import json
 
 import requests
 from sleekxmppfs import ClientXMPP, Callback, MatchXPath
@@ -115,21 +116,26 @@ def snakecase(string):
 
 
 class EcoVacsAPI:
-    CLIENT_KEY = "eJUWrzRv34qFSaYk"
-    SECRET = "Cyu5jcR4zyK6QEPn1hdIGXB5QIDAQABMA0GC"
+    USERLOGIN_AUTH_APPKEY = "1581917520081"
+    USERLOGIN_SECRET = "ed5b3dd9a0253de7d90305d077eb5fee"
+
+    GETAUTH_AUTH_APPKEY = "1581923437995"
+    GETAUTH_SECRET = "304a71592690995b2bb304e66b5ddee6"
+
     PUBLIC_KEY = "MIIB/TCCAWYCCQDJ7TMYJFzqYDANBgkqhkiG9w0BAQUFADBCMQswCQYDVQQGEwJjbjEVMBMGA1UEBwwMRGVmYXVsdCBDaXR5MRwwGgYDVQQKDBNEZWZhdWx0IENvbXBhbnkgTHRkMCAXDTE3MDUwOTA1MTkxMFoYDzIxMTcwNDE1MDUxOTEwWjBCMQswCQYDVQQGEwJjbjEVMBMGA1UEBwwMRGVmYXVsdCBDaXR5MRwwGgYDVQQKDBNEZWZhdWx0IENvbXBhbnkgTHRkMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDb8V0OYUGP3Fs63E1gJzJh+7iqeymjFUKJUqSD60nhWReZ+Fg3tZvKKqgNcgl7EGXp1yNifJKUNC/SedFG1IJRh5hBeDMGq0m0RQYDpf9l0umqYURpJ5fmfvH/gjfHe3Eg/NTLm7QEa0a0Il2t3Cyu5jcR4zyK6QEPn1hdIGXB5QIDAQABMA0GCSqGSIb3DQEBBQUAA4GBANhIMT0+IyJa9SU8AEyaWZZmT2KEYrjakuadOvlkn3vFdhpvNpnnXiL+cyWy2oU1Q9MAdCTiOPfXmAQt8zIvP2JC8j6yRTcxJCvBwORDyv/uBtXFxBPEC6MDfzU2gKAaHeeJUWrzRv34qFSaYkYta8canK+PSInylQTjJK9VqmjQ"
-    MAIN_URL_FORMAT = "https://eco-{country}-api.ecovacs.com/v1/private/{country}/{lang}/{deviceId}/{appCode}/{appVersion}/{channel}/{deviceType}"
-    USER_URL_FORMAT = "https://users-{continent}.ecouser.net:8000/user.do"
+    LOGIN_URL_FORMAT = "https://gl-{country}-api.yeedi.com/v1/private/{country}/{lang}/{deviceId}/{appCode}/{appVersion}/{channel}/{deviceType}/user/login"
+    AUTH_URL_FORMAT = "https://gl-{country}-openapi.yeedi.com/v1/global/auth/getAuthCode"
+    USER_API_FORMAT = "https://api-app.dc-{continent}.ww.ecouser.net/api"
     REALM = "ecouser.net"
 
     def __init__(self, device_id, account_id, password_hash, country, continent):
         self.meta = {
             "country": country,
-            "lang": "en",
+            "lang": "EN",
             "deviceId": device_id,
-            "appCode": "i_eco_e",
-            "appVersion": "1.3.5",
-            "channel": "c_googleplay",
+            "appCode": "yd_global_e",
+            "appVersion": "1.3.0",
+            "channel": "google_play",
             "deviceType": "1",
         }
         _LOGGER.debug("Setting up EcoVacsAPI")
@@ -137,16 +143,26 @@ class EcoVacsAPI:
         self.country = country
         self.continent = continent
         login_info = self.__call_main_api(
-            "user/login",
-            ("account", self.encrypt(account_id)),
-            ("password", self.encrypt(password_hash)),
+            EcoVacsAPI.LOGIN_URL_FORMAT.format(**self.meta),
+            EcoVacsAPI.USERLOGIN_AUTH_APPKEY,
+            EcoVacsAPI.USERLOGIN_SECRET,
+            ("account", account_id),
+            ("password", password_hash),
+            ("authTimeZone", "GMT-8"),
+            sign_meta=True,
         )
         self.uid = login_info["uid"]
         self.login_access_token = login_info["accessToken"]
         self.auth_code = self.__call_main_api(
-            "user/getAuthCode",
+            EcoVacsAPI.AUTH_URL_FORMAT.format(**self.meta),
+            EcoVacsAPI.GETAUTH_AUTH_APPKEY,
+            EcoVacsAPI.GETAUTH_SECRET,
             ("uid", self.uid),
+            ("openId", "global"),
             ("accessToken", self.login_access_token),
+            ("bizType", ""),
+            ("deviceId", device_id),
+            sign_meta=False,
         )["authCode"]
         login_response = self.__call_login_by_it_token()
         self.user_access_token = login_response["token"]
@@ -155,29 +171,31 @@ class EcoVacsAPI:
             self.uid = login_response["userId"]
         logging.debug("EcoVacsAPI connection complete")
 
-    def __sign(self, params):
+    def __sign(self, params, appkey, secret, sign_meta=True):
         result = params.copy()
         result["authTimespan"] = int(time.time() * 1000)
-        result["authTimeZone"] = "GMT-8"
 
-        sign_on = self.meta.copy()
-        sign_on.update(result)
+        if sign_meta:
+            sign_on = self.meta.copy()
+            sign_on.update(result)
+        else:
+            sign_on = result
         sign_on_text = (
-            EcoVacsAPI.CLIENT_KEY
+            appkey
             + "".join([k + "=" + str(sign_on[k]) for k in sorted(sign_on.keys())])
-            + EcoVacsAPI.SECRET
+            + secret
         )
 
-        result["authAppkey"] = EcoVacsAPI.CLIENT_KEY
+        result["authAppkey"] = appkey
         result["authSign"] = self.md5(sign_on_text)
         return result
 
-    def __call_main_api(self, function, *args):
-        _LOGGER.debug("calling main api {} with {}".format(function, args))
+    def __call_main_api(self, url, appkey, secret, *args, sign_meta=True):
+        _LOGGER.debug("calling main api {} with {}".format(url, args))
         params = OrderedDict(args)
         params["requestId"] = self.md5(time.time())
-        url = (EcoVacsAPI.MAIN_URL_FORMAT + "/" + function).format(**self.meta)
-        api_response = requests.get(url, self.__sign(params))
+        signed_params = self.__sign(params, appkey, secret, sign_meta=sign_meta)
+        api_response = requests.get(url, params=signed_params)
         json = api_response.json()
         _LOGGER.debug("got {}".format(json))
         if json["code"] == "0000":
@@ -186,34 +204,36 @@ class EcoVacsAPI:
             _LOGGER.warning("incorrect email or password")
             raise ValueError("incorrect email or password")
         else:
-            _LOGGER.error("call to {} failed with {}".format(function, json))
+            _LOGGER.error("call to {} failed with {}".format(url, json))
             raise RuntimeError(
                 "failure code {} ({}) for call {} and parameters {}".format(
-                    json["code"], json["msg"], function, args
+                    json["code"], json["msg"], url, args
                 )
             )
 
-    def __call_user_api(self, function, args):
+    def __call_user_api(self, url, function, args):
         _LOGGER.debug("calling user api {} with {}".format(function, args))
         params = {"todo": function}
         params.update(args)
         response = requests.post(
-            EcoVacsAPI.USER_URL_FORMAT.format(continent=self.continent), json=params
+            EcoVacsAPI.USER_API_FORMAT.format(continent=self.continent) + "/" + url, 
+            json=params,
         )
-        json = response.json()
-        _LOGGER.debug("got {}".format(json))
-        if json["result"] == "ok":
-            return json
+        rjson = response.json()
+        _LOGGER.debug("got {}".format(rjson))
+        if rjson["result"] == "ok":
+            return rjson
         else:
-            _LOGGER.error("call to {} failed with {}".format(function, json))
+            _LOGGER.error("call to {} failed with {}".format(function, rjson))
             raise RuntimeError(
                 "failure {} ({}) for call {} and parameters {}".format(
-                    json["error"], json["errno"], function, params
+                    rjson["error"], rjson["errno"], function, params
                 )
             )
 
     def __call_login_by_it_token(self):
         return self.__call_user_api(
+            "users/user.do",
             "loginByItToken",
             {
                 "country": self.meta["country"].upper(),
@@ -221,11 +241,15 @@ class EcoVacsAPI:
                 "realm": EcoVacsAPI.REALM,
                 "userId": self.uid,
                 "token": self.auth_code,
+                "org": "ECOYDWW",
+                'last': '',
+                'edition': 'ECOGLOBLE',
             },
         )
 
     def devices(self):
         devices = self.__call_user_api(
+            "users/user.do",
             "GetDeviceList",
             {
                 "userid": self.uid,

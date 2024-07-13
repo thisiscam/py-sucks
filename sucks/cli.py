@@ -4,6 +4,7 @@ import os
 import platform
 import random
 import re
+import uuid
 
 import click
 from pycountry_convert import country_alpha2_to_continent_code
@@ -135,6 +136,14 @@ def cli(debug):
     _LOGGER.parent.setLevel(logging.DEBUG if debug else logging.ERROR)
 
 
+
+def get_machine_id():
+    # Get the hardware address as a 48-bit integer
+    node = uuid.getnode()
+    # Convert to a string or use it directly
+    machine_id = uuid.UUID(int=node)
+    return str(machine_id)
+
 @cli.command(help="logs in with specified email; run this first")
 @click.option("--email", prompt="Ecovacs app email")
 @click.option("--password", prompt="Ecovacs app password", hide_input=True)
@@ -156,7 +165,7 @@ def login(email, password, country_code, continent_code):
         exit(0)
     config = OrderedDict()
     password_hash = EcoVacsAPI.md5(password)
-    device_id = EcoVacsAPI.md5(str(time.time()))
+    device_id = EcoVacsAPI.md5(get_machine_id())
     try:
         EcoVacsAPI(device_id, email, password_hash, country_code, continent_code)
     except ValueError as e:
